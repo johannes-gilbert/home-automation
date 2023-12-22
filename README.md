@@ -45,3 +45,32 @@ Although you could go with the [docker-compose.yml](https://github.com/johannes-
     └── portainer-ce
         └── data
 ```
+
+## During usage
+
+### InfluxDB
+
+In InfluxDB v1.x, you can use following command to find out the disk usage of database, measurement and even shards: `influx_inspect report-disk -detailed /var/lib/influxdb/data/` To execute the command you need to connect to the CLI of influxdb's container (e.g. going via Portainer's (web) container console). The output looks like this:
+```text
+root@5a77ee7ded5c:/# influx_inspect report-disk -detailed /var/lib/influxdb/data/
+
+TSM files inspected: 15 /15              
+Completed in 32.133997ms
+{
+  "Summary": {"shards": 15, "tsm_files": 15, "total_tsm_size": 128463580 },
+  "Shard": [
+    {"db": "solar", "rp": "autogen", "shard": "11", "tsm_files": 1, "size": 143010},
+    ...
+    {"db": "system_stats", "rp": "autogen", "shard": "10", "tsm_files": 1, "size": 1642668},
+    ...
+    {"db": "temperatures", "rp": "autogen", "shard": "12", "tsm_files": 1, "size": 21858973},
+    ...
+  ],
+  "Measurement": [
+    {"db": "solar", "rp": "autogen", "measurement": "power_statistics", "size": 875440},
+    {"db": "system_stats", "rp": "autogen", "measurement": "statistics", "size": 8325685},
+    {"db": "temperatures", "rp": "autogen", "measurement": "sensors", "size": 117735754}
+  ]
+}
+```
+The output sizes are bits so in this case the overall size is 128463580 bits ≈ 122.5 MByte.
